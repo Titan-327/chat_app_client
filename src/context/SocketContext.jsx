@@ -23,9 +23,17 @@ export const SocketProvider = ({ children }) => {
     // 🔥 prevent duplicate connections (React StrictMode)
     if (socketRef.current) return;
 
-    console.log("🔌 Creating socket connection...");
+    // -------------------------------------------------------------
+    // 👇 FIX: Use Environment Variable instead of Localhost
+    // -------------------------------------------------------------
+    const rawUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+    
+    // Remove "/api" suffix if present (Sockets connect to root, not /api)
+    const socketUrl = rawUrl.replace(/\/api\/?$/, ""); 
 
-    const s = io("http://localhost:5000", {
+    console.log("🔌 Creating socket connection to:", socketUrl);
+
+    const s = io(socketUrl, {
       auth: {
         token: user.token,
       },
